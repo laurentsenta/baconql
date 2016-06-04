@@ -10,28 +10,26 @@ log = logging.getLogger(__name__)
 
 OP_QUERY = 'query'
 OP_EXECUTE = 'execute'
-OP_INSERT = 'insert'
 OP_RETURNING = 'return'
 
-RET_SCALAR = 'scalar'
-RET_ONE = 'one'
-RET_MANY = 'many'
-RET_AFFECTED = 'affected'
-RET_RAW = 'raw'
+RES_SCALAR = 'scalar'
+RES_ONE = 'one'
+RES_MANY = 'many'
+RES_AFFECTED = 'affected'
+RES_RAW = 'raw'
 
-_MAPPING_OP = {
+_MAPPING_OPERATION = {
     OP_QUERY: [':?', ':query'],
     OP_EXECUTE: [':!', ':execute'],
-    OP_INSERT: [':i', ':insert'],
     OP_RETURNING: [':<', ':returning']
 }
 
-_MAPPING_RET = {
-    RET_SCALAR: [':s', ':scalar'],
-    RET_ONE: [':1', ':one'],
-    RET_MANY: [':*', ':many'],
-    RET_AFFECTED: [':n', ':affected'],
-    RET_RAW: [':raw']
+_MAPPING_RESULT = {
+    RES_SCALAR: [':s', ':scalar'],
+    RES_ONE: [':1', ':one'],
+    RES_MANY: [':*', ':many'],
+    RES_AFFECTED: [':n', ':affected'],
+    RES_RAW: [':raw']
 }
 
 
@@ -45,39 +43,27 @@ def _find_mapping(mapping_name, mapping, value):
                                      Chain(mapping).values().flatten().join(', ').end()))
 
 
-class Block(object):
-    def __init__(self, def_, args, body):
-        # TODO: test this.
-        self.def_ = def_
-        self.args = args
-        self.body = body
+def _clean_header_str(s):
+    s = s.strip()
 
-    @property
-    def result_template(self):
-        return '_result_' + self.def_['ret'] + '.py'
+    if not s.startswith('--'):
+        raise InvalidHeaderException("header `%s' should start with `--'" % (s,))
 
-    @property
-    def name(self):
-        return self.def_['name']
-
-    def args_template(self, *names):
-        return map(lambda name: {'name': name}, names) + self.args
-
-    def statement(self, prefix):
-        return ('\n' + prefix).join(self.body)
+    return s[2:].strip()
 
 
-def trim_comment(l):
-    l = l.strip()
+def _clean_header(line):
+    try:
+        return line._replace(content=_clean_header_str(line.content))
+    except Exception as e:
+        # TODO: Figure out a nice way to embed line information for parsing debugging.
+        #       Python2 doesn't provide rethrow, this pattern kinda sucks.
+        e.line_number = line.line_number
+        raise e
 
-    if not l.startswith('--'):
-        raise InvalidHeaderException("header `%s' should start with `--'" % l)
 
-    return l[2:].strip()
-
-
-def parse_def(l):
-    params = Chain(l).split(' ').filter(None).end()
+def parse_def_str(s):
+    params = Chain(s).split(' ').filter(None).end()
 
     if len(params) == 2:
         (name, op), ret = params, ':raw'
@@ -88,36 +74,76 @@ def parse_def(l):
                 "definition `%s' is not of the form `NAME OPERATION [RETURN]'"
         )
 
-    assert python.is_valid_identifier(name), \
-        "name: `%s' should be a valid python identifier" % name
+    return Definition(name, op, ret)
 
-    return dict(name=name,
-                op=_find_mapping('operations', _MAPPING_OP, op),
-                ret=_find_mapping('count', _MAPPING_RET, ret))
+
+def parse_def_line(line):
+    try:
+        return parse_def_str(line.content)
+    except Exception as e:
+        # TODO: Figure out a nice way to embed line information for parsing debugging.
+        #       Python2 doesn't provide rethrow, this pattern kinda sucks.
+        e.line_number = line.line_number
+        raise e
+
+
+class Definition(object):
+    def __init__(self, name, str_op, str_result):
+        assert python.is_valid_identifier(name), \
+            "name: `%s' should be a valid python identifier" % name
+
+        self.name = name
+        self.op = _find_mapping("operation", _MAPPING_OPERATION, str_op)
+        self.result = _find_mapping("result", _MAPPING_RESULT, str_result)
+
+
+class Block(object):
+    def __init__(self, def_, args, body):
+        # TODO: test this.
+        self.def_ = def_
+        self.args = args
+        self.body = body
+
+    @property
+    def result_template(self):
+        return '_result_' + self.def_.result + '.py'
+
+    @property
+    def name(self):
+        return self.def_.name
+
+    def args_template(self, *prefix_names):
+        return map(lambda name: {'name': name}, prefix_names) + self.args
+
+    def statement(self, prefix):
+        return (Chain(self.body)
+                .map(lambda l: l.content)
+                .join('\n' + prefix)
+                .end())
 
 
 def parse_arg(arg):
-    m = re.match(r'^:(?P<name>\S+) : (?P<type>\S+)$', arg)
-    assert m is not None
+    m = re.match(r'^:(?P<name>\S+) : (?P<type>\S+)$', arg.content)
+    assert m is not None, \
+        "Invalid argument parameter `%s' at line %d" % (arg.content, arg.line_number)
     return m.groupdict()
 
 
-def parse_block(lines):
-    header = (Chain(lines)
-              .call(itertools.takewhile, lambda x: x.startswith('--'))
+def parse_raw_block(raw_block):
+    header = (Chain(raw_block.lines)
+              .call(itertools.takewhile, lambda l: l.content.startswith('--'))
               .list()
-              .map(trim_comment)
+              .map(_clean_header)
               .end())
+    body = raw_block.lines[len(header):]
 
-    body = lines[len(header):]
-
+    # Process header
     first, rest = header[0], header[1:]
-
-    def_ = parse_def(first)
+    def_ = parse_def_line(first)
     args = map(parse_arg, rest)
 
     return Block(def_, args, body)
 
 
-def parse(lines_per_block):
-    return map(parse_block, lines_per_block)
+def parse(raw_blocks):
+    return map(parse_raw_block, raw_blocks)

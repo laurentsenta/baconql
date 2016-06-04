@@ -2,9 +2,13 @@
 SELECT COUNT(*)
 FROM basic;
 
--- insert_simple :i :n
+-- insert_simple :! :n
 -- :username : VARCHAR(40)
 INSERT INTO basic
-(username, created)
+(username)
 VALUES
-  (:username, CURRENT_DATE);
+(:username);
+
+-- list_all :? :*
+SELECT *
+FROM basic;

@@ -4,7 +4,9 @@ from os import path
 
 import click
 
-import core, loader, parser
+import core
+import loader
+import parser
 from F import Chain
 
 logging.basicConfig(level=logging.DEBUG)
@@ -32,5 +34,7 @@ def compile(path_in, path_out):
 
     log.debug('rendering to %s', out)
 
-    Chain(path_in).call(loader.load).call(parser.parse).call(core.render, out)
-
+    (Chain(path_in)
+     .call(loader.load_file)
+     .call(loader.tokenize_lines, path_in)
+     .call(parser.parse).call(core.render, out))
