@@ -23,5 +23,5 @@ def test_names(parsed):
 
 
 def test_basics(parsed):
-    assert len(parsed[0].args) == 0
-    assert len(parsed[1].args) == 1
+    assert len(parsed[0].input_args) == 0
+    assert len(parsed[1].input_args) == 1

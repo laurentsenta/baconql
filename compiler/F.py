@@ -38,3 +38,10 @@ class Chain(object):
 
     def end(self):
         return self._content
+
+
+def with_defaults(d, **kwargs):
+    for k, v in kwargs.items():
+        if k not in d:
+            d[k] = v
+    return d

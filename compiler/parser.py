@@ -3,7 +3,7 @@ import logging
 import re
 
 from . import python
-from .F import Chain
+from .F import Chain, with_defaults
 from .exceptions import InvalidHeaderException, UnknownMappingException, InvalidDefinitionException
 
 log = logging.getLogger(__name__)
@@ -30,6 +30,16 @@ _MAPPING_RESULT = {
     RES_MANY: [':*', ':many'],
     RES_AFFECTED: [':n', ':affected'],
     RES_RAW: [':raw']
+}
+
+HEADER_INPUT = 'input'
+HEADER_OUTPUT = 'output'
+HEADER_DOC = 'doc'
+
+HEADER_REGEXPS = {
+    re.compile(r'^:(?P<name>\S+) : (?P<value>\S+)$'): HEADER_INPUT,
+    re.compile(r'^>(?P<name>\S+) : (?P<value>\S+)$'): HEADER_OUTPUT,
+    re.compile(r'^_doc (?P<value>.+)$'): HEADER_DOC
 }
 
 
@@ -87,6 +97,13 @@ def parse_def_line(line):
         raise e
 
 
+class Arg(object):
+    def __init__(self, type, name, value):
+        self.type = type
+        self.name = name
+        self.value = value
+
+
 class Definition(object):
     def __init__(self, name, str_op, str_result):
         assert python.is_valid_identifier(name), \
@@ -101,8 +118,13 @@ class Block(object):
     def __init__(self, def_, args, body):
         # TODO: test this.
         self.def_ = def_
-        self.args = args
         self.body = body
+
+        self.input_args = filter(lambda x: x.type == HEADER_INPUT, args)
+        self.output_args = filter(lambda x: x.type == HEADER_OUTPUT, args)
+        self.docs = filter(lambda x: x.type == HEADER_DOC, args)
+
+        assert sum(map(len, [self.input_args, self.output_args, self.docs])) == len(args)
 
     @property
     def result_template(self):
@@ -112,8 +134,8 @@ class Block(object):
     def name(self):
         return self.def_.name
 
-    def args_template(self, *prefix_names):
-        return map(lambda name: {'name': name}, prefix_names) + self.args
+    def input_names(self, *prefix_names):
+        return list(prefix_names) + map(lambda x: x.name, self.input_args)
 
     def statement(self, prefix):
         return (Chain(self.body)
@@ -123,10 +145,15 @@ class Block(object):
 
 
 def parse_arg(arg):
-    m = re.match(r'^:(?P<name>\S+) : (?P<type>\S+)$', arg.content)
-    assert m is not None, \
-        "Invalid argument parameter `%s' at line %d" % (arg.content, arg.line_number)
-    return m.groupdict()
+    for (r, type) in HEADER_REGEXPS.items():
+        m = r.match(arg.content)
+
+        if m is not None:
+            m = with_defaults(m.groupdict(), name=None, value=None)
+            return Arg(type, m['name'], m['value'])
+
+    raise InvalidHeaderException("Invalid argument parameter `%s' at line %d"
+                                 % (arg.content, arg.line_number))
 
 
 def parse_raw_block(raw_block):
