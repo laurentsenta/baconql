@@ -8,6 +8,7 @@ import pytest
 from sqlalchemy import create_engine, text
 
 import compiler
+from compiler.F import Chain
 
 __DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -30,6 +31,7 @@ def unique_file(*dirs_then_name):
 
 
 def execute_file(db, fp):
+    log.debug("executing sql file: `%s'", fp)
     with open(fp, 'r') as f:
         lines = f.readlines()
         txt = '\n'.join(lines)
@@ -44,7 +46,13 @@ def db():
     log.info("Creating db: %s", p)
     db = create_engine('sqlite:///' + p)
 
-    execute_file(db, path.join(__DIR, 'sql', 'setup.sql'))
+    sqls = path.join(__DIR, 'sql')
+
+    (Chain(sqls)
+     .call(os.listdir)
+     .filter(lambda x: x.endswith('_setup.sql'))
+     .map(lambda x: path.join(sqls, x))
+     .map(lambda x: execute_file(db, x)))
 
     return db
 
@@ -58,3 +66,13 @@ def basic_module():
 
     from compiled import basic
     return basic
+
+@pytest.fixture(scope='session')
+def typing_module():
+    compiler.compile(path.join(__DIR, 'sql', 'typing.sql'),
+                     path.join('out', 'compiled'))
+
+    sys.path.append('out')
+
+    from compiled import typing
+    return typing

@@ -22,6 +22,9 @@ def compiler(path_in, path_out):
 
 
 def compile(path_in, path_out):
+    assert path.isfile(path_in), "compiling folders not supported yet"
+    assert not path.isfile(path_out), "output to a folder"
+
     if not path.exists(path_out):
         os.makedirs(path_out)
 
@@ -30,7 +33,8 @@ def compile(path_in, path_out):
         with open(init, 'w') as f:
             pass
 
-    out = path_out + '/basic.py'
+    name_in, ext = path.splitext(path.basename(path_in))
+    out = path.join(path_out, name_in + '.py')
 
     log.debug('rendering to %s', out)
 
