@@ -4,7 +4,7 @@ from jinja2 import Environment, PackageLoader
 
 log = logging.getLogger(__name__)
 
-__ENV = Environment(loader=PackageLoader('compiler', 'templates'))
+__ENV = Environment(loader=PackageLoader('compiler', 'templates'), extensions=['jinja2.ext.with_'])
 
 
 def render(output, blocks):

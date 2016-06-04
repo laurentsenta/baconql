@@ -18,6 +18,9 @@ def {{ block.name }}(
     r = db.execute(stmnt)
     {% endif -%}
 
-    return r.scalar()
+    {%- with exec_sym = 'r', dest_sym = 'd', prefix = '    ' %}
+    {%- include block.result_template %}
+    {% endwith -%}
 
+    return d
 {% endfor %}

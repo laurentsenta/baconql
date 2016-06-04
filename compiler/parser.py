@@ -13,6 +13,7 @@ OP_EXECUTE = 'execute'
 OP_INSERT = 'insert'
 OP_RETURNING = 'return'
 
+RET_SCALAR = 'scalar'
 RET_ONE = 'one'
 RET_MANY = 'many'
 RET_AFFECTED = 'affected'
@@ -26,6 +27,7 @@ _MAPPING_OP = {
 }
 
 _MAPPING_RET = {
+    RET_SCALAR: [':s', ':scalar'],
     RET_ONE: [':1', ':one'],
     RET_MANY: [':*', ':many'],
     RET_AFFECTED: [':n', ':affected'],
@@ -44,16 +46,19 @@ def _find_mapping(mapping_name, mapping, value):
 
 
 class Block(object):
-    def __init__(self, name, op, ret, args, body):
+    def __init__(self, def_, args, body):
         # TODO: test this.
-        assert python.is_valid_identifier(name), \
-            "name: `%s' should be a valid python identifier" % name
-
-        self.name = name
-        self.op = op
-        self.ret = ret
+        self.def_ = def_
         self.args = args
         self.body = body
+
+    @property
+    def result_template(self):
+        return '_result_' + self.def_['ret'] + '.py'
+
+    @property
+    def name(self):
+        return self.def_['name']
 
     def args_template(self, *names):
         return map(lambda name: {'name': name}, names) + self.args
@@ -83,6 +88,9 @@ def parse_def(l):
                 "definition `%s' is not of the form `NAME OPERATION [RETURN]'"
         )
 
+    assert python.is_valid_identifier(name), \
+        "name: `%s' should be a valid python identifier" % name
+
     return dict(name=name,
                 op=_find_mapping('operations', _MAPPING_OP, op),
                 ret=_find_mapping('count', _MAPPING_RET, ret))
@@ -94,22 +102,22 @@ def parse_arg(arg):
     return m.groupdict()
 
 
-def parse_block(loaded):
-    header = (Chain(loaded)
+def parse_block(lines):
+    header = (Chain(lines)
               .call(itertools.takewhile, lambda x: x.startswith('--'))
               .list()
               .map(trim_comment)
               .end())
 
-    body = loaded[len(header):]
+    body = lines[len(header):]
 
     first, rest = header[0], header[1:]
 
     def_ = parse_def(first)
     args = map(parse_arg, rest)
 
-    return Block(def_['name'], def_['op'], def_['ret'], args, body)
+    return Block(def_, args, body)
 
 
-def parse(loaded):
-    return map(parse_block, loaded)
+def parse(lines_per_block):
+    return map(parse_block, lines_per_block)

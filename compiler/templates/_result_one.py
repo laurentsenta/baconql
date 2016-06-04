@@ -1,0 +1,1 @@
+{{ dest_sym }} = dict({{ exec_sym }}.fetchone())

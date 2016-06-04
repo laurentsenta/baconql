@@ -24,7 +24,7 @@ def test_loader_count(loaded):
 
 
 def test_loader_content(loaded):
-    assert loaded[0][0] == '-- count_all :? :1'
+    assert loaded[0][0] == '-- count_all :? :s'
     assert loaded[1][0] == '-- insert_simple :i :n'
 
 

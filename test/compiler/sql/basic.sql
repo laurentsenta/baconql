@@ -1,4 +1,4 @@
--- count_all :? :1
+-- count_all :? :s
 SELECT COUNT(*)
 FROM basic;
 
