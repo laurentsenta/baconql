@@ -46,7 +46,7 @@ def db():
     log.info("Creating db: %s", p)
     db = create_engine('sqlite:///' + p)
 
-    sqls = path.join(__DIR, 'sql')
+    sqls = path.join(__DIR, 'sql_setup')
 
     (Chain(sqls)
      .call(os.listdir)
