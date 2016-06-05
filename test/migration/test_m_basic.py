@@ -17,21 +17,24 @@ def trim_backend_tables(tables):
 
 
 def test_one_up(db):
-    migration.up(db, path.join(__DIR, 'basic'))
+    migration.up(db, path.join(__DIR, 'm_basic'))
     assert trim_backend_tables(tables(db)) == [VERSION_TABLE, 'first']
 
+
 def test_two_ups(db):
-    migration.up(db, path.join(__DIR, 'basic'))
-    migration.up(db, path.join(__DIR, 'basic'))
+    migration.up(db, path.join(__DIR, 'm_basic'))
+    migration.up(db, path.join(__DIR, 'm_basic'))
     assert trim_backend_tables(tables(db)) == [VERSION_TABLE, 'first', 'second']
 
+
 def test_up_and_down(db):
-    migration.up(db, path.join(__DIR, 'basic'))
-    migration.down(db, path.join(__DIR, 'basic'))
+    migration.up(db, path.join(__DIR, 'm_basic'))
+    migration.down(db, path.join(__DIR, 'm_basic'))
     assert trim_backend_tables(tables(db)) == [VERSION_TABLE]
 
+
 def test_up_up_and_down(db):
-    migration.up(db, path.join(__DIR, 'basic'))
-    migration.up(db, path.join(__DIR, 'basic'))
-    migration.down(db, path.join(__DIR, 'basic'))
+    migration.up(db, path.join(__DIR, 'm_basic'))
+    migration.up(db, path.join(__DIR, 'm_basic'))
+    migration.down(db, path.join(__DIR, 'm_basic'))
     assert trim_backend_tables(tables(db)) == [VERSION_TABLE, 'first']

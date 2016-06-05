@@ -7,7 +7,7 @@ from migration.select import InvalidMigrationException, NoMigrationFoundExceptio
 
 __DIR = os.path.dirname(os.path.realpath(__file__))
 
-BASIC_DIR = os.path.join(__DIR, 'basic')
+BASIC_DIR = os.path.join(__DIR, 'm_basic')
 
 
 def test_list_migrations():
