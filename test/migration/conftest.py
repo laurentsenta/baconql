@@ -4,7 +4,7 @@ import os
 from os import path
 
 import pytest
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine
 
 __DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -24,15 +24,6 @@ def unique_file(*dirs_then_name):
 
         if not path.exists(p):
             return p
-
-
-def execute_file(db, fp):
-    log.debug("executing sql file: `%s'", fp)
-    with open(fp, 'r') as f:
-        lines = f.readlines()
-        txt = '\n'.join(lines)
-
-    db.execute(text(txt))
 
 
 @pytest.fixture(scope='function')

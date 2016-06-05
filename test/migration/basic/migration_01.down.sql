@@ -1,1 +1,1 @@
-DROP TABLE basic;
+DROP TABLE first;
