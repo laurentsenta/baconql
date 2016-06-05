@@ -1,11 +1,11 @@
-import os
 from os import path
 
 import migration
 from migration.utils import tables
 from migration.version import VERSION_TABLE
 
-__DIR = os.path.dirname(os.path.realpath(__file__))
+DIR = path.dirname(path.realpath(__file__))
+MIGRATIONS = path.join(DIR, 'm_basic')
 
 
 def test_nothing(db):
@@ -17,24 +17,24 @@ def trim_backend_tables(tables):
 
 
 def test_one_up(db):
-    migration.up(db, path.join(__DIR, 'm_basic'))
+    migration.up(db, MIGRATIONS)
     assert trim_backend_tables(tables(db)) == [VERSION_TABLE, 'first']
 
 
 def test_two_ups(db):
-    migration.up(db, path.join(__DIR, 'm_basic'))
-    migration.up(db, path.join(__DIR, 'm_basic'))
+    migration.up(db, MIGRATIONS)
+    migration.up(db, MIGRATIONS)
     assert trim_backend_tables(tables(db)) == [VERSION_TABLE, 'first', 'second']
 
 
 def test_up_and_down(db):
-    migration.up(db, path.join(__DIR, 'm_basic'))
-    migration.down(db, path.join(__DIR, 'm_basic'))
+    migration.up(db, MIGRATIONS)
+    migration.down(db, MIGRATIONS)
     assert trim_backend_tables(tables(db)) == [VERSION_TABLE]
 
 
 def test_up_up_and_down(db):
-    migration.up(db, path.join(__DIR, 'm_basic'))
-    migration.up(db, path.join(__DIR, 'm_basic'))
-    migration.down(db, path.join(__DIR, 'm_basic'))
+    migration.up(db, MIGRATIONS)
+    migration.up(db, MIGRATIONS)
+    migration.down(db, MIGRATIONS)
     assert trim_backend_tables(tables(db)) == [VERSION_TABLE, 'first']
