@@ -1,6 +1,7 @@
 *.pyc
 out/
 .cache
+.coverage
 dist/
 build/
 *.egg-info/

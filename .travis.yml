@@ -1,0 +1,10 @@
+language: python
+python:
+  - "2.7"
+install:
+  - pip install coveralls
+  - pip install .
+script:
+  - coverage run --source=test,baconql -m pytest test
+after_success:
+  - coveralls
