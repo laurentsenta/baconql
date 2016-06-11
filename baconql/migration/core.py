@@ -1,8 +1,9 @@
+import logging
 from os import path
 
 from sqlalchemy import text
 
-from test.migration.conftest import log
+log = logging.getLogger(__name__)
 
 SUFFIX_SQL_UP = '.up.sql'
 SUFFIX_SQL_DOWN = '.down.sql'

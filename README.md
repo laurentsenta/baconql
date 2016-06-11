@@ -4,6 +4,7 @@ baconql
 baconql is an attempt at reconciling myself, Python and SQL.
 
 It provides:
+
  - an SQL interface without ORM or weird Python DSL,
  - a simple migration system, no boilerplate needed.
 
@@ -49,6 +50,7 @@ for you.
 baconql generates a `users.py` file that you can import and `assert user.count_all(db) == 42`.
 
 The exact syntax will be describe later, but basically:
+
 - one file = one module
 - one block = description header + SQL body
 - description header = name + type of operation (query, mutation, returning) + cardinality of the result (one, many, scalar, affected)
@@ -74,18 +76,21 @@ I'd love to replace it with a more focused library. Handling typing seem's to be
 If you dig into the internals you'll see that it's more of a quick & dirty POC than a well
 thought codebase. Comments & issues, good or bad, will be highly appreciated.
 
+## Release
+
+- requires `pypandoc` package to convert this Markdown to reStructuredText.
 
 ## TODOs
 
-- Setup tox and make this 2.6 & 3.. compatible
-- Set a license
-- Shorten this readme, add usage documentation and a demo,
-- Find a solution to avoid repeating every argument type
+- [ ] Setup tox and make this 2.6 & 3.. compatible
+- [ ] Set a license
+- [ ] Shorten this readme, add usage documentation and a demo,
+- [ ] Find a solution to avoid repeating every argument type
     - parse the sql to figure out the inputs?
     - allow user to provide default input/output mappings, used when doing `SELECT *' for example.
-- Add option to specify a docstring and prefixes (special imports) for a module
-- Clean parsing phase, maybe with a real grammar (?),
-- Exceptions system with a consistent way to raise with line numbers,
-- More unit-testing,
-- Pypi-ize,
-- Split into 2 different projects.
+- [ ] Add option to specify a docstring and prefixes (special imports) for a module
+- [ ] Clean parsing phase, maybe with a real grammar (?),
+- [ ] Exceptions system with a consistent way to raise with line numbers,
+- [ ] More unit-testing,
+- [x] Pypi-ize,
+- [ ] Split into 2 different projects.

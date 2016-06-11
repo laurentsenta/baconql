@@ -1,0 +1,4 @@
+include README.md
+include baconql/VERSION
+recursive-include test *.sql
+prune out
