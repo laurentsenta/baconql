@@ -21,7 +21,7 @@ def compiler(path_in, path_out):
     compile(path_in, path_out)
 
 
-def compile(path_in, path_out):
+def compile_file(path_in, path_out):
     assert path.isfile(path_in), "compiling folders not supported yet"
     assert not path.isfile(path_out), "output to a folder"
 
@@ -42,3 +42,15 @@ def compile(path_in, path_out):
      .call(loader.load_file)
      .call(loader.tokenize_lines, path_in)
      .call(parser.parse).call(core.render, out))
+
+
+def compile(path_in, path_out):
+    assert not path.isfile(path_out), "output to a folder"
+
+    if path.isdir(path_in):
+        files = map(lambda p: path.join(path_in, p), os.listdir(path_in))
+    else:
+        files = [path_in]
+
+    for file in files:
+        compile_file(file, path_out)

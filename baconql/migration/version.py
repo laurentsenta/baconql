@@ -1,6 +1,6 @@
 from sqlalchemy import text
 
-from migration.utils import tables
+from baconql.migration.utils import tables
 
 VERSION_TABLE = 'bacon_version'
 

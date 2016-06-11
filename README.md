@@ -77,6 +77,7 @@ thought codebase. Comments & issues, good or bad, will be highly appreciated.
 
 ## TODOs
 
+- Setup tox and make this 2.6 & 3.. compatible
 - Set a license
 - Shorten this readme, add usage documentation and a demo,
 - Find a solution to avoid repeating every argument type

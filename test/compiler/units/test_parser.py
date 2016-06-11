@@ -1,9 +1,9 @@
 import pytest
-
 from compiler.exceptions import InvalidHeaderException
-from compiler.parser import (OP_QUERY, OP_EXECUTE, OP_RETURNING, RES_ONE,
-                             RES_AFFECTED, RES_MANY, RES_RAW, RES_SCALAR)
-from compiler.parser import parse_def_str, _clean_header_str
+
+from baconql.compiler.parser import (OP_QUERY, OP_EXECUTE, OP_RETURNING, RES_ONE,
+                                     RES_AFFECTED, RES_MANY, RES_RAW, RES_SCALAR)
+from baconql.compiler.parser import parse_def_str, _clean_header_str
 
 
 def test_trim_comment():

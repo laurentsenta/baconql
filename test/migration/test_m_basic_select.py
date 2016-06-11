@@ -2,8 +2,8 @@ from os import path
 
 import pytest
 
-from migration import select
-from migration.select import InvalidMigrationException, NoMigrationFoundException
+from baconql.migration import select
+from baconql.migration.select import InvalidMigrationException, NoMigrationFoundException
 
 DIR = path.dirname(path.realpath(__file__))
 MIGRATIONS = path.join(DIR, 'm_basic')

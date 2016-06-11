@@ -2,8 +2,8 @@ from os import path
 
 from sqlalchemy import text
 
-import migration
-from migration.utils import tables
+from baconql import migration
+from baconql.migration.utils import tables
 
 DIR = path.dirname(path.realpath(__file__))
 MIGRATIONS = path.join(DIR, 'm_python')

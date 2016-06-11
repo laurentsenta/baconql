@@ -1,8 +1,8 @@
 from os import path
 
-import migration
-from migration.utils import tables
-from migration.version import VERSION_TABLE
+from baconql import migration
+from baconql.migration.utils import tables
+from baconql.migration.version import VERSION_TABLE
 
 DIR = path.dirname(path.realpath(__file__))
 MIGRATIONS = path.join(DIR, 'm_basic')

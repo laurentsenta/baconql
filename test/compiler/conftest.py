@@ -7,8 +7,8 @@ from os import path
 import pytest
 from sqlalchemy import create_engine, text
 
-import compiler
-from compiler.F import Chain
+from baconql import compiler
+from baconql.compiler import Chain
 
 __DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -40,6 +40,14 @@ def execute_file(db, fp):
 
 
 @pytest.fixture(scope='function')
+def cli_folder():
+    p = unique_file('out', 'test_compiler_cli', 'cli')
+    if not path.exists(p):
+        os.makedirs(p)
+    return p
+
+
+@pytest.fixture(scope='function')
 def db():
     p = unique_file('out', 'test_dbs', 'test_compiler')
 
@@ -66,6 +74,7 @@ def basic_module():
 
     from compiled import basic
     return basic
+
 
 @pytest.fixture(scope='session')
 def typing_module():

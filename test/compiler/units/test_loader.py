@@ -1,6 +1,6 @@
 import pytest
 
-from compiler import loader
+from baconql.compiler import loader
 
 test_data = [
     ("test_0",

@@ -1,14 +1,16 @@
 import click
+
 from compiler import compiler
 from migration import migration
 
 
 @click.group()
-def cli():
+def execute():
     pass
 
-cli.add_command(compiler)
-cli.add_command(migration)
+
+execute.add_command(compiler)
+execute.add_command(migration)
 
 if __name__ == '__main__':
-    cli()
+    execute()

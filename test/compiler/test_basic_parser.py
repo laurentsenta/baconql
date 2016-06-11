@@ -3,7 +3,7 @@ from os import path
 
 import pytest
 
-from compiler import parser
+from baconql.compiler import parser
 from .test_basic_loader import loaded
 
 __DIR = os.path.dirname(os.path.realpath(__file__))

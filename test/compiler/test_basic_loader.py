@@ -1,9 +1,8 @@
 import os
+from compiler import loader, Chain
 from os import path
 
 import pytest
-
-from compiler import loader, parser, Chain
 
 __DIR = os.path.dirname(os.path.realpath(__file__))
 SQL_BASIC = path.join(__DIR, 'sql', 'basic.sql')

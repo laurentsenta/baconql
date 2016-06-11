@@ -1,6 +1,6 @@
 import pytest
 
-from migration import version
+from baconql.migration import version
 from ..conftest import db
 
 db = db
