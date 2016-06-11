@@ -1,5 +1,5 @@
 import os
-from compiler import loader, Chain
+from baconql.compiler import loader, Chain
 from os import path
 
 import pytest
