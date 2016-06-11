@@ -1,6 +1,11 @@
 baconql
 =======
 
+[![Build Status](https://travis-ci.org/lsenta/baconql.svg?branch=master)](https://travis-ci.org/lsenta/baconql)
+
+[![Coverage Status](https://coveralls.io/repos/github/lsenta/baconql/badge.svg?branch=master)](https://coveralls.io/github/lsenta/baconql?branch=master)
+
+
 baconql is an attempt at reconciling myself, Python and SQL.
 
 It provides:
