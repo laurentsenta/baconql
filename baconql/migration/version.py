@@ -18,9 +18,12 @@ def get(db):
 
 def create_version(db, v):
     # TODO: make this atomic / look into alembic to check if they solve the issue.
-    db.execute(text(
-            """CREATE TABLE %s (id VARCHAR(128));""" % (VERSION_TABLE,)
-    ))
+
+    if VERSION_TABLE not in tables(db):
+        db.execute(text(
+                """CREATE TABLE %s (id VARCHAR(128));""" % (VERSION_TABLE,)
+        ))
+
     db.execute(text(
             """INSERT INTO %s (id) VALUES (:id);""" % (VERSION_TABLE,)
     ), id=v)

@@ -4,10 +4,10 @@ from os import path
 
 import click
 
-import core
-import loader
-import parser
-from F import Chain
+from . import core
+from . import loader
+from . import parser
+from .F import Chain
 
 logging.basicConfig(level=logging.DEBUG)
 

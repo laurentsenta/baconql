@@ -16,6 +16,7 @@ def up(db, migrations_dir):
     files = select.files(migrations_dir, next_v)
     core.up(db, migrations_dir, files)
     version.set(db, current_v, next_v)
+    return next_v
 
 
 def down(db, migrations_dir):
@@ -24,3 +25,4 @@ def down(db, migrations_dir):
     files = select.files(migrations_dir, current_v)
     core.down(db, migrations_dir, files)
     version.set(db, current_v, next_v)
+    return next_v
