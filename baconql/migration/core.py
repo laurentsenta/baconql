@@ -1,6 +1,7 @@
 import logging
 from os import path
 
+import sqlparse
 from sqlalchemy import text
 
 log = logging.getLogger(__name__)
@@ -49,7 +50,12 @@ def execute_sql_file(db, fp):
         lines = f.readlines()
         txt = '\n'.join(lines)
 
-    db.execute(text(txt))
+    parts = sqlparse.split(txt)
+
+    # TODO: use transaction
+    for i, part in enumerate(parts):
+        log.debug("executing statement %s, `%s...'", i, part[:20].replace('\n', ''))
+        db.execute(text(part))
 
 
 def execute_python_file(db, fp, fct):

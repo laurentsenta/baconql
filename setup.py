@@ -49,11 +49,13 @@ setup(
 
             'Programming Language :: Python :: 2',
             'Programming Language :: Python :: 2.7',
-            # TODO: Add more compat if possible (3, 2.6)
+            'Programming Language :: Python :: 3',
+            'Programming Language :: Python :: 3.5',
         ],
         install_requires=[
             'SQLAlchemy>=1.0',
             'click>=6.6',
             'Jinja2>=2.8',
+            'sqlparse>=0.1'
         ]
 )

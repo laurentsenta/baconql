@@ -3,6 +3,7 @@ from os import path
 from baconql import migration
 from baconql.migration.utils import tables
 from baconql.migration.version import VERSION_TABLE
+from .utils import trim_backend_tables
 
 DIR = path.dirname(path.realpath(__file__))
 MIGRATIONS = path.join(DIR, 'm_basic')
@@ -10,10 +11,6 @@ MIGRATIONS = path.join(DIR, 'm_basic')
 
 def test_nothing(db):
     assert tables(db) == []
-
-
-def trim_backend_tables(tables):
-    return [x for x in tables if x != 'sqlite_sequence']
 
 
 def test_one_up(db):

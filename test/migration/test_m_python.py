@@ -13,10 +13,6 @@ def test_nothing(db):
     assert tables(db) == []
 
 
-def trim_backend_tables(tables):
-    return [x for x in tables if x != 'sqlite_sequence']
-
-
 def list_basic(db, table):
     t = text("""SELECT * FROM %s;""" % (table,))
     e = db.execute(t)
