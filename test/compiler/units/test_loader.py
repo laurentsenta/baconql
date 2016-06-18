@@ -54,6 +54,6 @@ test_data = [
 
 @pytest.mark.parametrize("name, content, expected", test_data)
 def test_tokenize(name, content, expected):
-    lines = map(str.strip, content.split('\n'))
+    lines = list(map(str.strip, content.split('\n')))
     tokenized = loader.tokenize_lines(name, lines)
     assert tokenized == expected

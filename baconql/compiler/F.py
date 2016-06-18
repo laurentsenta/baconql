@@ -1,3 +1,6 @@
+from functools import reduce
+
+
 class Chain(object):
     # Thread macro, `->' ripoff from clojure
     def __init__(self, content):
@@ -36,8 +39,14 @@ class Chain(object):
         self._content = filter(f, self._content)
         return self
 
-    def end(self):
-        return self._content
+    def to(self, t):
+        return t(self._content)
+
+    def as_list(self):
+        return self.to(list)
+
+    def as_str(self):
+        return self.to(str)
 
 
 def with_defaults(d, **kwargs):

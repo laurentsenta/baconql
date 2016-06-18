@@ -1,7 +1,7 @@
 import logging
 import os
 
-import core
+from . import core
 
 log = logging.getLogger(__name__)
 
@@ -11,7 +11,7 @@ class InvalidMigrationException(Exception):
 
 
 def is_migration(file_name):
-    return any(filter(lambda x: file_name.endswith(x), core.SUFFIXES))
+    return any([x for x in core.SUFFIXES if file_name.endswith(x)])
 
 
 def migration_name(file_name):
@@ -23,7 +23,7 @@ def migration_name(file_name):
 
 def all(dir):
     ls = os.listdir(dir)
-    ls = filter(is_migration, ls)
+    ls = list(filter(is_migration, ls))
     names = set(map(migration_name, ls))
     # TODO: Warn if both up/down are not present.
     return sorted(names)
@@ -73,4 +73,4 @@ def prev_(dir, current):
 
 def files(dir, version):
     ls = os.listdir(dir)
-    return filter(lambda x: x.startswith(version), ls)
+    return [x for x in ls if x.startswith(version)]

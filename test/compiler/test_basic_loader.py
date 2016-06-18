@@ -13,7 +13,7 @@ def loaded():
     return (Chain(SQL_BASIC)
             .call(loader.load_file)
             .call(loader.tokenize_lines, SQL_BASIC)
-            .end())
+            .as_list())
 
 
 def test_count(loaded):

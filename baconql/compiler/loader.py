@@ -12,7 +12,7 @@ def load_file(fp):
 
     with open(fp, 'r') as f:
         lines = f.readlines()
-        lines = map(str.strip, lines)
+        lines = list(map(str.strip, lines))
 
     return lines
 

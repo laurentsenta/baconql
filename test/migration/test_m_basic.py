@@ -13,7 +13,7 @@ def test_nothing(db):
 
 
 def trim_backend_tables(tables):
-    return filter(lambda x: x != 'sqlite_sequence', tables)
+    return [x for x in tables if x != 'sqlite_sequence']
 
 
 def test_one_up(db):

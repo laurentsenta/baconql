@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import sys
 from os import path
 
@@ -10,7 +12,7 @@ try:
 
     description = pypandoc.convert('README.md', 'rst')
 except (IOError, ImportError):
-    print >> sys.stderr, "Missing pandoc module to build the README."
+    print("Missing pandoc module to build the README.", file=sys.stderr)
     description = ''
 
 with open(path.join(here, 'baconql', 'VERSION'), 'rb') as f:
@@ -50,7 +52,7 @@ setup(
             # TODO: Add more compat if possible (3, 2.6)
         ],
         install_requires=[
-            'SQLAlchemy>=1.0.13',
+            'SQLAlchemy>=1.0',
             'click>=6.6',
             'Jinja2>=2.8',
         ]

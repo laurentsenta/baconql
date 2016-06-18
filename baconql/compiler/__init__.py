@@ -48,7 +48,7 @@ def compile(path_in, path_out):
     assert not path.isfile(path_out), "output to a folder"
 
     if path.isdir(path_in):
-        files = map(lambda p: path.join(path_in, p), os.listdir(path_in))
+        files = [path.join(path_in, p) for p in os.listdir(path_in)]
     else:
         files = [path_in]
 

@@ -1,2 +1,2 @@
 
-{{ prefix }}{{ dest_sym }} = map(dict, {{ exec_sym }}.fetchall())
+{{ prefix }}{{ dest_sym }} = [dict(x) for x in {{ exec_sym }}.fetchall()]

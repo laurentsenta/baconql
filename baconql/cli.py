@@ -1,7 +1,7 @@
 import click
 
-from compiler import compiler
-from migration import migration
+from .compiler import compiler
+from .migration import migration
 from . import __version__ as baconql_version
 
 

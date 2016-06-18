@@ -44,13 +44,13 @@ HEADER_REGEXPS = {
 
 
 def _find_mapping(mapping_name, mapping, value):
-    for (y, xs) in mapping.items():
+    for y, xs in mapping.items():
         if value in xs:
             return y
 
     raise UnknownMappingException("`%s' is not a valid mapping for %s.\nValid values are: %s"
                                   % (value, mapping_name,
-                                     Chain(mapping).values().flatten().join(', ').end()))
+                                     Chain(mapping).values().flatten().join(', ').as_string()))
 
 
 def _clean_header_str(s):
@@ -73,7 +73,7 @@ def _clean_header(line):
 
 
 def parse_def_str(s):
-    params = Chain(s).split(' ').filter(None).end()
+    params = Chain(s).split(' ').filter(None).as_list()
 
     if len(params) == 2:
         (name, op), ret = params, ':raw'
@@ -120,9 +120,9 @@ class Block(object):
         self.def_ = def_
         self.body = body
 
-        self.input_args = filter(lambda x: x.type == HEADER_INPUT, args)
-        self.output_args = filter(lambda x: x.type == HEADER_OUTPUT, args)
-        self.docs = filter(lambda x: x.type == HEADER_DOC, args)
+        self.input_args = [x for x in args if x.type == HEADER_INPUT]
+        self.output_args = [x for x in args if x.type == HEADER_OUTPUT]
+        self.docs = [x for x in args if x.type == HEADER_DOC]
 
         assert sum(map(len, [self.input_args, self.output_args, self.docs])) == len(args)
 
@@ -135,17 +135,17 @@ class Block(object):
         return self.def_.name
 
     def input_names(self, *prefix_names):
-        return list(prefix_names) + map(lambda x: x.name, self.input_args)
+        return list(prefix_names) + [x.name for x in self.input_args]
 
     def statement(self, prefix):
         return (Chain(self.body)
                 .map(lambda l: l.content)
                 .join('\n' + prefix)
-                .end())
+                .as_str())
 
 
 def parse_arg(arg):
-    for (r, type) in HEADER_REGEXPS.items():
+    for r, type in HEADER_REGEXPS.items():
         m = r.match(arg.content)
 
         if m is not None:
@@ -161,16 +161,16 @@ def parse_raw_block(raw_block):
               .call(itertools.takewhile, lambda l: l.content.startswith('--'))
               .list()
               .map(_clean_header)
-              .end())
+              .as_list())
     body = raw_block.lines[len(header):]
 
     # Process header
     first, rest = header[0], header[1:]
     def_ = parse_def_line(first)
-    args = map(parse_arg, rest)
+    args = list(map(parse_arg, rest))
 
     return Block(def_, args, body)
 
 
 def parse(raw_blocks):
-    return map(parse_raw_block, raw_blocks)
+    return list(map(parse_raw_block, raw_blocks))

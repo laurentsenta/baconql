@@ -14,13 +14,13 @@ def test_nothing(db):
 
 
 def trim_backend_tables(tables):
-    return filter(lambda x: x != 'sqlite_sequence', tables)
+    return [x for x in tables if x != 'sqlite_sequence']
 
 
 def list_basic(db, table):
     t = text("""SELECT * FROM %s;""" % (table,))
     e = db.execute(t)
-    r = map(dict, e.fetchall())
+    r = [dict(x) for x in e.fetchall()]
     return r
 
 

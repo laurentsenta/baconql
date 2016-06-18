@@ -60,7 +60,8 @@ def db():
      .call(os.listdir)
      .filter(lambda x: x.endswith('_setup.sql'))
      .map(lambda x: path.join(sqls, x))
-     .map(lambda x: execute_file(db, x)))
+     .map(lambda x: execute_file(db, x))
+     .as_list())
 
     return db
 

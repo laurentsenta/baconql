@@ -13,7 +13,7 @@ SUFFIXES = [SUFFIX_SQL_UP, SUFFIX_SQL_DOWN, SUFFIX_PYTHON]
 
 
 def find_suffixed(files, suffix):
-    f = filter(lambda x: x.endswith(suffix), files)
+    f = [x for x in files if x.endswith(suffix)]
 
     assert len(f) <= 1, "Multiple migration for the same suffix?!"
     return f[0] if len(f) == 1 else None
