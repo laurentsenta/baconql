@@ -1,19 +1,19 @@
 import pytest
-from baconql.compiler.exceptions import InvalidHeaderException
 
-from baconql.compiler.parser import (OP_QUERY, OP_EXECUTE, OP_RETURNING, RES_ONE,
-                                     RES_AFFECTED, RES_MANY, RES_RAW, RES_SCALAR)
-from baconql.compiler.parser import parse_def_str, _clean_header_str
+from baconql.compiler.defs import (OP_QUERY, OP_EXECUTE, OP_RETURNING, RES_ONE,
+                                   RES_AFFECTED, RES_MANY, RES_RAW, RES_SCALAR)
+from baconql.compiler.exceptions import InvalidHeaderException
+from baconql.compiler.parser import _without_comment_marker, _parse_def
 
 
 def test_trim_comment():
-    assert _clean_header_str('-- ground') == 'ground'
-    assert _clean_header_str('--control') == 'control'
-    assert _clean_header_str('  -- to') == 'to'
-    assert _clean_header_str('  -- major     ') == 'major'
+    assert _without_comment_marker('-- ground') == 'ground'
+    assert _without_comment_marker('--control') == 'control'
+    assert _without_comment_marker('  -- to') == 'to'
+    assert _without_comment_marker('  -- major     ') == 'major'
 
     with pytest.raises(InvalidHeaderException) as e:
-        _clean_header_str('tom')
+        _without_comment_marker('tom')
     assert "should start with `--'" in str(e)
 
 
@@ -26,7 +26,7 @@ def test_trim_comment():
     ("away :returning :1", OP_RETURNING)
 ])
 def test_parse_def_op(input, expected):
-    assert parse_def_str(input).op == expected
+    assert _parse_def(input).op == expected
 
 
 @pytest.mark.parametrize('input, expected', [
@@ -43,4 +43,4 @@ def test_parse_def_op(input, expected):
     ("moments :< :raw", RES_RAW),
 ])
 def test_parse_def_result(input, expected):
-    assert parse_def_str(input).result == expected
+    assert _parse_def(input).result == expected
