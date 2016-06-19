@@ -5,7 +5,7 @@ from sqlalchemy.types import * {# TODO: maybe use explicit imports? #}
 
 {% for block in blocks %}
 def {{ block.name }}(
-    {%- for arg in block.input_names('db') %}
+    {%- for arg in block.all_inputs('db') %}
         {{- arg }}{% if not loop.last %},{% endif %}
     {%- endfor %}):
     {%- if block.docs %}
@@ -28,16 +28,22 @@ def {{ block.name }}(
     )
     {% endif %}
 
-    {% if block.input_args -%}
-    r = db.execute(stmnt,
-                   {%- for arg in block.input_args %}
-                       {{- arg.name }}={{ arg.name }}{% if not loop.last %}, {% endif %}
-                   {%- endfor %})
-    {% else -%}
-    r = db.execute(stmnt)
-    {% endif -%}
+    r = db.execute(stmnt
+            {# Parameters defined in the SQL header (with typing information): #}
+            {%- if block.input_args -%},
+                {%- for arg in block.input_args %}
+                    {{- arg.name }}={{ arg.name }}{% if not loop.last %}, {% endif %}
+                {%- endfor %}
+            {% endif %}
+            {# Parameters extracted from the SQL body: #}
+            {% if block.input_implicits_names -%},
+                {%- for arg in block.input_implicits_names %}
+                    {{- arg }}={{ arg }}{% if not loop.last %}, {% endif %}
+                {%- endfor %}
+            {% endif %}
+    )
 
-    {%- with exec_sym = 'r', dest_sym = 'd', prefix = '    ' %}
+    {% with exec_sym = 'r', dest_sym = 'd', prefix = '    ' %}
     {%- include block.result_template %}
     {% endwith -%}
 

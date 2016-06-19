@@ -1,6 +1,9 @@
 import itertools
 import logging
 
+import sqlparse
+from sqlparse.tokens import Token
+
 from . import defs
 from . import python
 from .F import Chain
@@ -42,13 +45,29 @@ class Definition(object):
         self.result = defs.get_result_kind(str_result)
 
 
+def _gather_sql_placeholders(body):
+    p = sqlparse.parse(body)
+    assert len(p) == 1
+    p = p[0]
+    tokens = list(p.flatten())
+    names = [x.value[1:] for x in tokens if x.ttype == Token.Name.Placeholder]
+    return sorted(set(names))
+
+
 class Block(object):
     def __init__(self, def_, args, body):
         # TODO: test this.
+        # TODO: lots of type transformation (body, join(body)
+        #       and error-prone details (input_args are object, input_implicits are strings, etc).
         self.def_ = def_
         self.body = body
 
         self.input_args = [x for x in args if x.is_input]
+        self.input_names = [x.name for x in self.input_args]
+
+        sql_placeholders = _gather_sql_placeholders('\n'.join(body))
+        self.input_implicits_names = [x for x in sql_placeholders if x not in self.input_names]
+
         self.output_args = [x for x in args if x.is_output]
         self.docs = [x for x in args if x.is_doc]
 
@@ -62,8 +81,8 @@ class Block(object):
     def name(self):
         return self.def_.name
 
-    def input_names(self, *prefix_names):
-        return list(prefix_names) + [x.name for x in self.input_args]
+    def all_inputs(self, *prefix_names):
+        return itertools.chain(prefix_names, self.input_names, self.input_implicits_names)
 
     def statement(self, prefix):
         return (Chain(self.body)
@@ -81,7 +100,7 @@ def _parse_raw_block(raw_block):
     first, rest = header[0], header[1:]
 
     def_ = _parse_def(first)
-    args = list(map(_parse_arg, rest))
+    args = [_parse_arg(a) for a in rest]
 
     return Block(def_, args, body)
 

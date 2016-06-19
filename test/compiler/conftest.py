@@ -86,3 +86,14 @@ def typing_module():
 
     from compiled import typing
     return typing
+
+
+@pytest.fixture(scope='session')
+def auto_inputs_module():
+    compiler.compile(path.join(__DIR, 'sql', 'auto_inputs.sql'),
+                     path.join('out', 'compiled'))
+
+    sys.path.append('out')
+
+    from compiled import auto_inputs
+    return auto_inputs
