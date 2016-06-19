@@ -27,6 +27,14 @@ def unique_file(*dirs_then_name):
 
 
 @pytest.fixture(scope='function')
+def cli_folder():
+    p = unique_file('out', 'test_compiler_cli', 'cli')
+    if not path.exists(p):
+        os.makedirs(p)
+    return p
+
+
+@pytest.fixture(scope='function')
 def db():
     p = unique_file('out', 'test_dbs', 'test_migrations')
 
