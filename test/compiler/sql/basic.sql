@@ -1,14 +1,14 @@
--- count_all :? :s
+-- :name count_all :? :s
 SELECT COUNT(*)
 FROM basic;
 
--- insert_simple :! :n
--- :username : VARCHAR(40)
+-- :name insert_simple :! :n
+-- :in :username : VARCHAR(40)
 INSERT INTO basic
 (username)
 VALUES
 (:username);
 
--- list_all :? :*
+-- :name list_all :? :*
 SELECT *
 FROM basic;

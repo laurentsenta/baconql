@@ -21,5 +21,5 @@ def test_count(loaded):
 
 
 def test_content(loaded):
-    assert loaded[0].lines[0] == '-- count_all :? :s'
-    assert loaded[1].lines[0] == '-- insert_simple :! :n'
+    assert loaded[0].lines[0] == '-- :name count_all :? :s'
+    assert loaded[1].lines[0] == '-- :name insert_simple :! :n'

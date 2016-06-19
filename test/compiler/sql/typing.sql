@@ -1,27 +1,27 @@
--- insert_simple :! :n
--- :username : VARCHAR(40)
--- :birth : DATE
+-- :name insert_simple :! :n
+-- :in :username : VARCHAR(40)
+-- :in :birth : DATE
 INSERT INTO typing
 (username, birth)
 VALUES
-(:username, :birth);
+  (:username, :birth);
 
--- get_user :? :1
--- :username : VARCHAR(40)
--- >birth : DATE
--- _doc retrieve a user by name
--- _doc this needs a multiline explanation
+-- :name get_user :? :1
+-- :doc retrieve a user by name
+-- :doc this needs a multiline explanation
+-- :in :username : VARCHAR(40)
+-- :out :birth : DATE
 SELECT *
 FROM typing
 WHERE username = username
 LIMIT 1;
 
--- list_birthdays :? :*
--- :birth : DATE
+-- :name list_birthdays :? :*
+-- :in :birth : DATE
 SELECT *
 FROM typing
 WHERE birth = :birth;
 
--- list_all :? :*
+-- :name list_all :? :*
 SELECT *
 FROM basic;

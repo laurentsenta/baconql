@@ -99,6 +99,9 @@ def _extract_header_prefix(block_lines):
 def _parse_def(s):
     params = Chain(s).split(' ').filter(None).as_list()
 
+    assert params[0] == ':name', "First line of header should be a def `:name NAME OP [RETURN]'"
+    params = params[1:]
+
     if len(params) == 2:
         (name, op), ret = params, ':raw'
     elif len(params) == 3:

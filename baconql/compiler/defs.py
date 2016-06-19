@@ -62,9 +62,9 @@ HEADER_OUTPUT = 'output'
 HEADER_DOC = 'doc'
 
 HEADER_REGEXPS = {
-    re.compile(r'^:(?P<name>\S+) : (?P<value>\S+)$'): HEADER_INPUT,
-    re.compile(r'^>(?P<name>\S+) : (?P<value>\S+)$'): HEADER_OUTPUT,
-    re.compile(r'^_doc (?P<value>.*)$'): HEADER_DOC
+    re.compile(r'^:in :(?P<name>\S+) : (?P<value>\S+)$'): HEADER_INPUT,
+    re.compile(r'^:out :(?P<name>\S+) : (?P<value>\S+)$'): HEADER_OUTPUT,
+    re.compile(r'^:doc (?P<value>.*)$'): HEADER_DOC
 }
 
 
